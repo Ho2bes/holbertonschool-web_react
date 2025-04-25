@@ -1,10 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, test, expect } from '@jest/globals';
 import App from './App';
 
 describe('App component', () => {
-    render(<App />);
+  test('renders the main heading', () => {
     render(<App />);
     const heading = screen.getByRole('heading', {
       level: 1,
@@ -26,3 +25,4 @@ describe('App component', () => {
     const image = screen.getByAltText(/holberton logo/i);
     expect(image).toBeInTheDocument();
   });
+});

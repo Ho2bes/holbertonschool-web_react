@@ -1,23 +1,21 @@
 import './App.css';
 import logo from './assets/holberton-logo.jpg';
-import { getCurrentYear, getFooterCopy } from './utils';
 
 function App() {
+  const year = new Date().getFullYear();
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} alt="Holberton logo" />
+    <>
+      <div className='App-header'>
+        <img src={logo} alt='holberton logo' />
         <h1>School dashboard</h1>
-      </header>
-
-      <main className="App-body">
+      </div>
+      <div className='App-body'>
         <p>Login to access the full dashboard</p>
-      </main>
-
-      <footer className="App-footer">
-        <p><i>Copyright {getCurrentYear()} - {getFooterCopy(true)}</i></p>
-      </footer>
-    </div>
+      </div>
+      <div className='App-footer'>
+        <p>Copyright {year} - holberton School</p>
+      </div>
+    </>
   );
 }
 
