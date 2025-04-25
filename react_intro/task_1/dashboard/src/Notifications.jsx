@@ -1,5 +1,5 @@
-import React from "react";
-import "./Notifications.css";
+import './Notifications.css';
+import React from 'react';
 
 function Notifications() {
   return (

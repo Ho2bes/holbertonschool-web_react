@@ -6,7 +6,10 @@ import Notifications from './Notifications';
 function App() {
   return (
     <>
-      <Notifications />
+      <div className="root-notifications">
+        <Notifications />
+      </div>
+
       <div className="App">
         <header className="App-header">
           <img src={logo} alt="Holberton logo" />
@@ -18,7 +21,11 @@ function App() {
         </main>
 
         <footer className="App-footer">
-          <p><i>Copyright {getCurrentYear()} - {getFooterCopy(false)}</i></p>
+          <p>
+            <i>
+              Copyright {getCurrentYear()} - {getFooterCopy(false)}
+            </i>
+          </p>
         </footer>
       </div>
     </>
