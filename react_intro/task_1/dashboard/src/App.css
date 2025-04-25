@@ -1,20 +1,36 @@
+.App {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
 .App-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  color: #e1003c;
+  color: #e1484c;
+  border-bottom: 3px solid #e1484c;
+  padding: 20px;
+}
+
+.App-header img {
+  height: 200px;
+  width: auto;
+  margin-right: 20px;
+}
+
+.App-header h1 {
+  font-weight: bold;
 }
 
 .App-body {
-  padding: 2rem;
+  padding: 30px;
+  min-height: 300px;
 }
 
 .App-footer {
-  padding: 1rem;
-  border-top: 1px solid #ccc;
+  border-top: 3px solid #e1484c;
   text-align: center;
   font-style: italic;
-  position: fixed;
-  width: 100%;
+  padding: 15px 0;
+  position: relative;
   bottom: 0;
+  width: 100%;
 }
