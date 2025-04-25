@@ -1,10 +1,10 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, describe, test, expect } from '@testing-library/react';
 import App from './App';
 
 describe('App component', () => {
   test('renders the main heading', () => {
-    const { container } = render(<App />);
+    render(<App />);
     const heading = screen.getByRole('heading', {
       level: 1,
       name: /school dashboard/i,
