@@ -1,5 +1,7 @@
 .notifications {
-	border: 2px solid #e1354b;
+	color: #e1484c;
+	border: 2px dashed #e1484c;
 	padding: 10px;
-	margin-bottom: 20px;
+	margin: 0;
   }
+
