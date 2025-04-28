@@ -1,37 +1,47 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import App from "./App";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from './App';
 
-describe("App component", () => {
-  test("renders 2 input elements", () => {
+describe('App component', () => {
+  test('renders the main heading', () => {
     render(<App />);
-
-    // Get all inputs by role "textbox" (email and password)
-    const inputs = screen.getAllByRole("textbox");
-
-    // Ensure exactly 2 inputs are rendered (email and password)
-    expect(inputs.length).toBe(2);
+    const heading = screen.getByRole('heading', { level: 1, name: /school dashboard/i });
+    expect(heading).toBeInTheDocument();
   });
 
-  test("renders 2 label elements with the text Email and Password", () => {
+  test('renders the login and footer paragraphs', () => {
     render(<App />);
+    const bodyText = screen.getByText(/login to access the full dashboard/i);
+    const footerText = screen.getByText(/copyright/i);
+    expect(bodyText).toBeInTheDocument();
+    expect(footerText).toBeInTheDocument();
+  });
 
-    // Get the label elements by their text content
+  test('renders the Holberton logo image', () => {
+    render(<App />);
+    const image = screen.getByAltText(/holberton logo/i);
+    expect(image).toBeInTheDocument();
+  });
+
+  test('renders two input elements', () => {
+    render(<App />);
+    const emailInput = screen.getByLabelText(/email/i);
+    const passwordInput = screen.getByLabelText(/password/i);
+    expect(emailInput).toBeInTheDocument();
+    expect(passwordInput).toBeInTheDocument();
+  });
+
+  test('renders two label elements with text Email and Password', () => {
+    render(<App />);
     const emailLabel = screen.getByLabelText(/email/i);
     const passwordLabel = screen.getByLabelText(/password/i);
-
-    // Ensure both labels exist in the document
     expect(emailLabel).toBeInTheDocument();
     expect(passwordLabel).toBeInTheDocument();
   });
 
-  test('renders a button with the text "OK"', () => {
+  test('renders a button with the text OK', () => {
     render(<App />);
-
-    // Get the button by role and name
-    const button = screen.getByRole("button", { name: /ok/i });
-
-    // Ensure the button is present in the document
+    const button = screen.getByRole('button', { name: /ok/i });
     expect(button).toBeInTheDocument();
   });
 });
