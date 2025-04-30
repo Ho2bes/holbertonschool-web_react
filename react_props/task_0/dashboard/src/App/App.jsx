@@ -1,37 +1,22 @@
 import "./App.css";
-import logo from "../assets/holberton-logo.jpg";
-import { getCurrentYear, getFooterCopy } from "../utils/utils";
+import { Fragment } from "react";
 import Notifications from "../Notifications/Notifications";
+import Header from "../Header/Header";
+import Login from "../Login/Login";
+import Footer from "../Footer/Footer";
 
 function App() {
   return (
-    <>
+    <Fragment>
       <div className="root-notifications">
         <Notifications />
       </div>
-      <div className="App-header">
-        <img src={logo} alt="holberton logo" />
-        <h1>School dashboard</h1>
-      </div>
+      <Header />
       <div className="App-body">
-        <p>Login to access the full dashboard</p>
-
-        {/* Ajout pour Task 3 : formulaire de login */}
-        <div className="App-login">
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" />
-
-          <label htmlFor="password">Password:</label>
-          <input type="password" id="password" name="password" />
-
-          <button>OK</button>
-        </div>
-
+        <Login />
       </div>
-      <div className="App-footer">
-        <p>Copyright {getCurrentYear()} - {getFooterCopy(false)}</p>
-      </div>
-    </>
+      <Footer />
+    </Fragment>
   );
 }
 
