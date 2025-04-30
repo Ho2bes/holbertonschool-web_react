@@ -1,0 +1,40 @@
+.notifications-title {
+  text-align: right;
+  margin-right: 20px;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.notifications {
+  border: 2px dashed #e1003c;
+  padding: 20px;
+  position: absolute;
+  right: 10px;
+  top: 40px;
+  background-color: white;
+  width: 400px;
+  font-size: 0.9rem;
+  z-index: 1;
+}
+
+.notifications p {
+  margin: 0 0 10px 0;
+}
+
+.notifications ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notifications li {
+  margin-bottom: 6px;
+}
+
+.notifications li[data-notification-type="default"] {
+  color: blue;
+}
+
+.notifications li[data-notification-type="urgent"] {
+  color: red;
+}
