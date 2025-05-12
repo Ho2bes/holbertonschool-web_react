@@ -1,24 +1,52 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import CourseList from './CourseList';
+import { render, screen } from "@testing-library/react";
+import CourseListRow from "./CourseListRow";
 
-describe('CourseList component', () => {
-  const courses = [
-    { id: 1, name: 'ES6', credit: 60 },
-    { id: 2, name: 'Webpack', credit: 20 },
-    { id: 3, name: 'React', credit: 40 },
-  ];
+describe('When isHeader is true', () => {
+  test('Check whether the component renders one columnheader that has the attributecolspan = 2', () => {
+    render(
+      <table>
+        <tbody>
+        <CourseListRow isHeader={true} textFirstCell="test OnlyOneCell" />
+        </tbody>
+      </table>
+  );
 
-  test('renders 5 rows when given a list of courses', () => {
-    render(<CourseList courses={courses} />);
-    const rows = screen.getAllByRole('row');
-    expect(rows).toHaveLength(5); // 2 headers + 3 course rows
-  });
+    const cols = screen.getAllByRole('columnheader');
 
-  test('renders 3 rows when given an empty course list', () => {
-    render(<CourseList courses={[]} />);
-    const rows = screen.getAllByRole('row');
-    expect(rows).toHaveLength(3); // 2 headers + 1 "no course available yet"
-    expect(screen.getByText(/no course available yet/i)).toBeInTheDocument();
-  });
+    expect(cols).toHaveLength(1);
+    expect(cols[0]).toHaveAttribute('colspan', '2');
+  })
+  test('Check whether the component renders 2 <th> cells', () => {
+    render(
+      <table>
+        <tbody>
+        <CourseListRow isHeader={true} textFirstCell="test firstCell" textSecondCell="testSecondCell" />
+        </tbody>
+      </table>
+  );
+
+    const cols = screen.getAllByRole('columnheader');
+
+    expect(cols).toHaveLength(2);
+  })
 });
+
+describe('When isHeader is false', () => {
+  test('Check to test the component renders correctly two td elements within a tr element', () => {
+    render(
+      <table>
+        <tbody>
+        <CourseListRow isHeader={false} textFirstCell="test firstCell" textSecondCell="testSecondCell" />
+        </tbody>
+      </table>
+  );
+  const row = screen.getByRole('row');
+  const cells = screen.getAllByRole('cell');
+
+  expect(row).toBeInTheDocument();
+  expect(cells).toHaveLength(2);
+
+  expect(cells[0]).toHaveTextContent("test firstCell");
+  expect(cells[1]).toHaveTextContent("testSecondCell");
+  })
+})

@@ -1,56 +1,39 @@
-import React from 'react';
-import './Notifications.css';
+import './Notifications.css'
+import closebtn from '../assets/close-button.png'
 import NotificationItem from './NotificationItem';
-import closeIcon from '../assets/close-button.png';
 
-function Notifications({ displayDrawer = false, notifications = [] }) {
-  const handleClick = () => {
-    console.log('Close button has been clicked');
-  };
-
+export default function Notifications({ notifications, displayDrawer=true }) {
   return (
     <>
-      <div className="notifications-title">Your notifications</div>
-
-      {displayDrawer && (
-        <div className="notifications">
-          <button
-            aria-label="Close"
-            onClick={handleClick}
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer'
-            }}
-          >
-            <img src={closeIcon} alt="close icon" style={{ width: '10px', height: '10px' }} />
-          </button>
-
-          <p>
-            {notifications.length === 0
-              ? 'No new notification for now'
-              : 'Here is the list of notifications'}
-          </p>
-
-          {notifications.length > 0 && (
-            <ul>
-              {notifications.map((notif) => (
-                <NotificationItem
-                  key={notif.id}
-                  type={notif.type}
-                  value={notif.value}
-                  html={notif.html}
-                />
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+      <div className='notifications-title'>
+        <p>Your notifications</p>
+      </div>
+        {displayDrawer ? (
+          <div className="notifications">
+            {notifications.length > 0 ? (
+              <>
+              <p>Here is the list of notifications</p>
+              <button
+              onClick={() => console.log('Close button has been clicked')} aria-label="Close">
+              <img src={closebtn} alt='CLose' />
+              </button>
+              <ul>
+                  {notifications.map((notification) => (
+                    <NotificationItem
+                      key={notification.id}
+                      type={notification.type}
+                      value={notification.value}
+                      html={notification.html} />
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p>No new notification for now</p>
+              )}
+          </div>
+        ) : (
+          <></>
+        )}
     </>
   );
 }
-
-export default Notifications;

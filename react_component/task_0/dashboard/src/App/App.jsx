@@ -9,7 +9,7 @@ import { getLatestNotification } from '../utils/utils';
 
 class App extends React.Component {
   render() {
-    const isLoggedIn = false;
+    const isLoggedIn = false; // change to true for testing CourseList display
 
     const notificationsList = [
       { id: 1, type: 'urgent', value: 'New course available' },

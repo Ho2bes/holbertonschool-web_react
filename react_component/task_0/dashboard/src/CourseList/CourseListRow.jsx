@@ -1,29 +1,23 @@
-import React from 'react';
-import CourseListRow from './CourseListRow';
-import './CourseList.css';
+import React from "react";
 
-function CourseList({ courses = [] }) {
-  return (
-    <table id="CourseList">
-      <thead>
-        <CourseListRow isHeader={true} textFirstCell="Available courses" />
-        <CourseListRow isHeader={true} textFirstCell="Course name" textSecondCell="Credit" />
-      </thead>
-      <tbody>
-        {courses.length === 0 ? (
-          <CourseListRow textFirstCell="No course available yet" />
-        ) : (
-          courses.map((course) => (
-            <CourseListRow
-              key={course.id}
-              textFirstCell={course.name}
-              textSecondCell={course.credit}
-            />
-          ))
-        )}
-      </tbody>
-    </table>
-  );
+export default function CourseListRow({ isHeader=false, textFirstCell="", textSecondCell=null }) {
+return (
+	<tr>
+		{isHeader ? (
+			textSecondCell === null ? (
+				<th colSpan="2">{textFirstCell}</th>
+			) : (
+				<>
+					<th style={{ width: '70%'}}>{textFirstCell}</th>
+					<th>{textSecondCell}</th>
+				</>
+			)
+		) : (
+			<>
+				<td>{textFirstCell}</td>
+				<td>{textSecondCell}</td>
+			</>
+		)}
+	</tr>
+);
 }
-
-export default CourseList;
