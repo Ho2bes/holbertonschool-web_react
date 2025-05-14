@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, css } from "aphrodite";
 import CourseListRow from "./CourseListRow";
+import PropTypes from 'prop-types';
 
 export default function CourseList({ courses = [] }) {
   return (
@@ -38,3 +39,17 @@ const styles = StyleSheet.create({
     marginTop: '20px',
   }
 });
+
+CourseList.propTypes = {
+  courses: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      credit: PropTypes.number.isRequired,
+    })
+  ),
+};
+
+CourseList.defaultProps = {
+  courses: [],
+};

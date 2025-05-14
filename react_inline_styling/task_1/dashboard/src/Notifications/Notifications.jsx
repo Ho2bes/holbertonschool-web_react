@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, css } from 'aphrodite';
 import closebtn from '../assets/close-button.png';
 import NotificationItem from './NotificationItem';
+import PropTypes from 'prop-types';
 
 class Notifications extends React.Component {
   markAsRead = (id) => {
@@ -89,5 +90,24 @@ const styles = StyleSheet.create({
     paddingLeft: '20px',
   },
 });
+
+Notifications.propTypes = {
+  notifications: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      type: PropTypes.string,
+      value: PropTypes.string,
+      html: PropTypes.shape({
+        __html: PropTypes.string,
+      }),
+    })
+  ),
+  displayDrawer: PropTypes.bool,
+};
+
+Notifications.defaultProps = {
+  notifications: [],
+  displayDrawer: true,
+};
 
 export default Notifications;
