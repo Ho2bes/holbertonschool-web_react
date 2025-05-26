@@ -4,7 +4,7 @@ import { getCurrentYear, getFooterCopy } from '../utils/utils';
 import AppContext from '../Context/context';
 
 export default function Footer() {
-  const { user } = useContext(AppContext);
+  const { user } = useContext(AppContext); // 👈 consomme le contexte
 
   return (
     <div className={css(styles.footer)}>

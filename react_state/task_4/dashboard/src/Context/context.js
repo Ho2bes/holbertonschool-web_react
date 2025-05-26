@@ -8,6 +8,6 @@ export const user = {
 
 export const logOut = () => {};
 
-const newContext = createContext({ user, logOut });
+const AppContext = createContext({ user, logOut });
 
-export default newContext;
+export default AppContext;

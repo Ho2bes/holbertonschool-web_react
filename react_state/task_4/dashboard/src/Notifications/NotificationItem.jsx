@@ -4,20 +4,28 @@ import { StyleSheet, css } from 'aphrodite';
 
 class NotificationItem extends React.PureComponent {
   render() {
-    const { type, html, value, markAsRead, id } = this.props;
-    const style = type === 'urgent' ? styles.urgent : styles.default;
+    const { type, html, value, id, markAsRead } = this.props;
 
-    return html ? (
+    const styleClass = css(
+      type === 'urgent' ? styles.urgent : styles.default,
+      styles.responsive
+    );
+
+    if (html) {
+      return (
+        <li
+          data-notification-type={type}
+          className={styleClass}
+          dangerouslySetInnerHTML={html}
+          onClick={() => markAsRead(id)}
+        />
+      );
+    }
+
+    return (
       <li
-        className={css(style)}
         data-notification-type={type}
-        dangerouslySetInnerHTML={html}
-        onClick={() => markAsRead(id)}
-      ></li>
-    ) : (
-      <li
-        className={css(style)}
-        data-notification-type={type}
+        className={styleClass}
         onClick={() => markAsRead(id)}
       >
         {value}
@@ -26,24 +34,20 @@ class NotificationItem extends React.PureComponent {
   }
 }
 
-const baseStyle = {
-  padding: '5px',
-  '@media (max-width: 900px)': {
-    width: '100vw',
-    fontSize: '20px',
-    borderBottom: '1px solid black',
-    padding: '10px 8px',
-  },
-};
-
 const styles = StyleSheet.create({
   default: {
-    ...baseStyle,
     color: 'blue',
   },
   urgent: {
-    ...baseStyle,
     color: 'red',
+  },
+  responsive: {
+    '@media (max-width: 900px)': {
+      width: '100%',
+      borderBottom: '1px solid black',
+      fontSize: '20px',
+      padding: '10px 8px',
+    },
   },
 });
 
@@ -53,8 +57,8 @@ NotificationItem.propTypes = {
   html: PropTypes.shape({
     __html: PropTypes.string,
   }),
+  id: PropTypes.number,
   markAsRead: PropTypes.func,
-  id: PropTypes.number.isRequired,
 };
 
 NotificationItem.defaultProps = {
