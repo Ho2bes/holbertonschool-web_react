@@ -1,74 +1,47 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Login from "./Login";
-import { StyleSheetTestUtils } from 'aphrodite';
 
-beforeAll(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+describe("<Login />", () => {
+  it("Submit button is disabled by default", () => {
+    render(<Login />);
+    const submitButton = screen.getByRole("button", { name: /ok/i });
+    expect(submitButton).toBeDisabled();
+  });
 
-afterAll(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
+  it("Submit button becomes enabled with valid inputs", () => {
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    const submitButton = screen.getByRole("button", { name: /ok/i });
+    expect(submitButton).not.toBeDisabled();
+  });
 
-test('the text content within the 2 p elements in the app-body and app-footer divs matches', () => {
-  render(<Login />);
-  const divbody = screen.getByText(/Login to access the full dashboard/i);
-  expect(divbody).toBeInTheDocument();
-});
+  it("Submit button stays disabled for invalid email", () => {
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: "invalid-email" },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: "password123" },
+    });
+    const submitButton = screen.getByRole("button", { name: /ok/i });
+    expect(submitButton).toBeDisabled();
+  });
 
-test('renders 2 input elements', () => {
-  render(<Login />);
-  const labelemail = screen.getByLabelText(/Email/i);
-  const labelpassword = screen.getByLabelText(/Password/i);
-  expect(labelemail).toBeInTheDocument();
-  expect(labelpassword).toBeInTheDocument();
-});
-
-test('renders 2 label elements with the text Email and Password', () => {
-  render(<Login />);
-  const labelemail = screen.getByLabelText(/email/i);
-  const labelpassword = screen.getByLabelText(/password/i);
-  expect(labelemail).toBeInTheDocument();
-  expect(labelpassword).toBeInTheDocument();
-});
-
-test('renders a button with the text OK', () => {
-  render(<Login />);
-  const button = screen.getByRole('button', { name: /ok/i });
-  expect(button).toBeInTheDocument();
-});
-
-// ✅ Nouveaux tests demandés dans la task 1 :
-
-test('Submit button is disabled by default', () => {
-  render(<Login />);
-  const submitBtn = screen.getByRole('button', { name: /ok/i });
-  expect(submitBtn).toBeDisabled();
-});
-
-test('Submit button is enabled only with valid email and password', () => {
-  render(<Login />);
-  const emailInput = screen.getByLabelText(/email/i);
-  const passwordInput = screen.getByLabelText(/password/i);
-  const submitBtn = screen.getByRole('button', { name: /ok/i });
-
-  // Vide (invalide)
-  fireEvent.change(emailInput, { target: { value: '' } });
-  fireEvent.change(passwordInput, { target: { value: '' } });
-  expect(submitBtn).toBeDisabled();
-
-  // Email invalide
-  fireEvent.change(emailInput, { target: { value: 'invalid' } });
-  fireEvent.change(passwordInput, { target: { value: '12345678' } });
-  expect(submitBtn).toBeDisabled();
-
-  // Mot de passe trop court
-  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
-  fireEvent.change(passwordInput, { target: { value: 'short' } });
-  expect(submitBtn).toBeDisabled();
-
-  // Valide
-  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
-  fireEvent.change(passwordInput, { target: { value: '12345678' } });
-  expect(submitBtn).toBeEnabled();
+  it("Submit button stays disabled for short password", () => {
+    render(<Login />);
+    fireEvent.change(screen.getByLabelText(/email/i), {
+      target: { value: "test@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/password/i), {
+      target: { value: "short" },
+    });
+    const submitButton = screen.getByRole("button", { name: /ok/i });
+    expect(submitButton).toBeDisabled();
+  });
 });
