@@ -1,42 +1,51 @@
-// task_2/dashboard/src/Login/Login.spec.js
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import Login from "./Login";
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from './App';
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe("Login Component", () => {
-  test("submit button disabled with invalid email or short password", () => {
-    render(<Login logIn={jest.fn()} email="" password="" />);
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-    const submitButton = screen.getByRole("button", { name: /OK/i });
-    expect(submitButton).toBeDisabled();
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-
-    fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-    fireEvent.change(passwordInput, { target: { value: "123" } });
-
-    expect(submitButton).toBeDisabled();
-
-    fireEvent.change(emailInput, { target: { value: "valid@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-
-    expect(submitButton).toBeEnabled();
+describe('App component', () => {
+  test('renders header, login and footer components', () => {
+    render(<App />);
+    expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Login to access the full dashboard/i)).toBeInTheDocument();
+    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
   });
 
-  test("calls logIn prop with email and password on submit", () => {
-    const mockLogIn = jest.fn();
-    render(<Login logIn={mockLogIn} email="" password="" />);
+  test('calls logOut and alerts when Ctrl + H is pressed', () => {
+    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    render(<App />);
+    fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
+    expect(alertMock).toHaveBeenCalledWith('Logging you out');
+    alertMock.mockRestore();
+  });
 
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-    const submitButton = screen.getByRole("button", { name: /OK/i });
+  test('displays News from the School and its paragraph', () => {
+    render(<App />);
+    expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
+    expect(screen.getByText(/Holberton School News goes here/i)).toBeInTheDocument();
+  });
+});
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-    fireEvent.click(submitButton);
+describe('App notification drawer behavior', () => {
+  test('displays drawer when clicking on "Your notifications"', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText(/your notifications/i));
+    expect(screen.getByText(/Here is the list of notifications/i)).toBeInTheDocument();
+  });
 
-    expect(mockLogIn).toHaveBeenCalledTimes(1);
-    expect(mockLogIn).toHaveBeenCalledWith("test@example.com", "password123");
+  test('hides drawer when clicking on close button', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText(/your notifications/i));
+    const closeBtn = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeBtn);
+    expect(screen.queryByText(/Here is the list of notifications/i)).not.toBeInTheDocument();
   });
 });
