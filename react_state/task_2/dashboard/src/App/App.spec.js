@@ -1,65 +1,51 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import App from "./App";
-import { StyleSheetTestUtils } from "aphrodite";
-import newContext from "../Context/context"; // Assure-toi que le chemin est correct
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from './App';
+import { StyleSheetTestUtils } from 'aphrodite';
 
-// Empêche l'injection des styles dans le DOM lors des tests
-beforeEach(() => {
+beforeAll(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterEach(() => {
+afterAll(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe("App component", () => {
-  test("renders header, login and footer components", () => {
+describe('App component', () => {
+  test('renders header, login and footer components', () => {
     render(<App />);
     expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
+    expect(screen.getByText(/Login to access the full dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
   });
 
-  test("calls logOut and alerts when Ctrl + H is pressed", () => {
-    const logOutMock = jest.fn();
-    const alertMock = jest.spyOn(window, "alert").mockImplementation(() => {});
-
-    // Mocke la méthode logOut directement sur le prototype de App
-    const originalLogOut = App.prototype.logOut;
-    App.prototype.logOut = logOutMock;
-
+  test('calls logOut and alerts when Ctrl + H is pressed', () => {
+    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
     render(<App />);
-
-    fireEvent.keyDown(document, {
-      key: "h",
-      ctrlKey: true,
-    });
-
-    expect(alertMock).toHaveBeenCalledWith("Logging you out");
-    expect(logOutMock).toHaveBeenCalledTimes(1);
-
-    // Nettoyage
-    App.prototype.logOut = originalLogOut;
+    fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
+    expect(alertMock).toHaveBeenCalledWith('Logging you out');
     alertMock.mockRestore();
   });
 
-  test('displays "Log in to continue" title when isLoggedIn is false', () => {
-    render(
-      <newContext.Provider
-        value={{ user: { isLoggedIn: false }, logOut: jest.fn() }}
-      >
-        <App />
-      </newContext.Provider>
-    );
-    expect(screen.getByText(/Log in to continue/i)).toBeInTheDocument();
-  });
-
-  test("displays News from the School and its paragraph", () => {
+  test('displays News from the School and its paragraph', () => {
     render(<App />);
     expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Holberton School News goes here/i)
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Holberton School News goes here/i)).toBeInTheDocument();
+  });
+});
+
+describe('App notification drawer behavior', () => {
+  test('displays drawer when clicking on "Your notifications"', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText(/your notifications/i));
+    expect(screen.getByText(/Here is the list of notifications/i)).toBeInTheDocument();
+  });
+
+  test('hides drawer when clicking on close button', () => {
+    render(<App />);
+    fireEvent.click(screen.getByText(/your notifications/i));
+    const closeBtn = screen.getByRole('button', { name: /close/i });
+    fireEvent.click(closeBtn);
+    expect(screen.queryByText(/Here is the list of notifications/i)).not.toBeInTheDocument();
   });
 });

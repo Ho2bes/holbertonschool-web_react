@@ -1,5 +1,15 @@
 import { render, screen } from "@testing-library/react";
 import Header from "./Header";
+import { StyleSheetTestUtils } from 'aphrodite';
+
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
+
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
+
 
 test('h1 element with the text School Dashboard is rendered', () => {
   render(<Header />);

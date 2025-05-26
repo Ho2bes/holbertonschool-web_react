@@ -1,6 +1,5 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import App from './App';
+import { render, screen, fireEvent } from "@testing-library/react";
+import Login from "./Login";
 import { StyleSheetTestUtils } from 'aphrodite';
 
 beforeAll(() => {
@@ -11,41 +10,84 @@ afterAll(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe('App component', () => {
-  test('renders header, login and footer components', () => {
-    render(<App />);
-    expect(screen.getByText(/School dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Login to access the full dashboard/i)).toBeInTheDocument();
-    expect(screen.getByText(/Copyright/i)).toBeInTheDocument();
-  });
-
-  test('calls logOut and alerts when Ctrl + H is pressed', () => {
-    const alertMock = jest.spyOn(window, 'alert').mockImplementation(() => {});
-    render(<App />);
-    fireEvent.keyDown(document, { key: 'h', ctrlKey: true });
-    expect(alertMock).toHaveBeenCalledWith('Logging you out');
-    alertMock.mockRestore();
-  });
-
-  test('displays News from the School and its paragraph', () => {
-    render(<App />);
-    expect(screen.getByText(/News from the School/i)).toBeInTheDocument();
-    expect(screen.getByText(/Holberton School News goes here/i)).toBeInTheDocument();
-  });
+test('the text content within the 2 p elements in the app-body and app-footer divs matches', () => {
+  render(<Login />);
+  const divbody = screen.getByText(/Login to access the full dashboard/i);
+  expect(divbody).toBeInTheDocument();
 });
 
-describe('App notification drawer behavior', () => {
-  test('displays drawer when clicking on "Your notifications"', () => {
-    render(<App />);
-    fireEvent.click(screen.getByText(/your notifications/i));
-    expect(screen.getByText(/Here is the list of notifications/i)).toBeInTheDocument();
-  });
+test('renders 2 input elements', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/Email/i);
+  const labelpassword = screen.getByLabelText(/Password/i);
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
 
-  test('hides drawer when clicking on close button', () => {
-    render(<App />);
-    fireEvent.click(screen.getByText(/your notifications/i));
-    const closeBtn = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeBtn);
-    expect(screen.queryByText(/Here is the list of notifications/i)).not.toBeInTheDocument();
-  });
+test('renders 2 label elements with the text Email and Password', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/email/i);
+  const labelpassword = screen.getByLabelText(/password/i);
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
+
+test('renders a button with the text OK', () => {
+  render(<Login />);
+  const button = screen.getByRole('button', { name: /ok/i });
+  expect(button).toBeInTheDocument();
+});
+
+// ✅ Nouveaux tests demandés dans la task 1 :
+
+test('Submit button is disabled by default', () => {
+  render(<Login />);
+  const submitBtn = screen.getByRole('button', { name: /ok/i });
+  expect(submitBtn).toBeDisabled();
+});
+
+test('Submit button is enabled only with valid email and password', () => {
+  render(<Login />);
+  const emailInput = screen.getByLabelText(/email/i);
+  const passwordInput = screen.getByLabelText(/password/i);
+  const submitBtn = screen.getByRole('button', { name: /ok/i });
+
+  // Vide (invalide)
+  fireEvent.change(emailInput, { target: { value: '' } });
+  fireEvent.change(passwordInput, { target: { value: '' } });
+  expect(submitBtn).toBeDisabled();
+
+  // Email invalide
+  fireEvent.change(emailInput, { target: { value: 'invalid' } });
+  fireEvent.change(passwordInput, { target: { value: '12345678' } });
+  expect(submitBtn).toBeDisabled();
+
+  // Mot de passe trop court
+  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
+  fireEvent.change(passwordInput, { target: { value: 'short' } });
+  expect(submitBtn).toBeDisabled();
+
+  // Valide
+  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
+  fireEvent.change(passwordInput, { target: { value: '12345678' } });
+  expect(submitBtn).toBeEnabled();
+});
+
+test('calls logIn with email and password when form is submitted', () => {
+  const logInMock = jest.fn();
+  render(<Login logIn={logInMock} />);
+
+  const emailInput = screen.getByLabelText(/email/i);
+  const passwordInput = screen.getByLabelText(/password/i);
+  const submitBtn = screen.getByRole('button', { name: /ok/i });
+
+  // Entrée de données valides
+  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
+  fireEvent.change(passwordInput, { target: { value: '12345678' } });
+
+  // Soumission du formulaire
+  fireEvent.click(submitBtn);
+
+  // Vérifie que logIn est bien appelé avec les bonnes valeurs
+  expect(logInMock).toHaveBeenCalledWith('test@mail.com', '12345678');
 });

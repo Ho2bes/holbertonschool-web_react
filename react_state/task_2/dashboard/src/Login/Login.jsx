@@ -1,149 +1,130 @@
 import React from 'react';
-import Notifications from '../Notifications/Notifications';
-import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
-import Login from '../Login/Login';
-import BodySection from '../BodySection/BodySection';
-import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
-import CourseList from '../CourseList/CourseList';
-import { getLatestNotification } from '../utils/utils';
 import { StyleSheet, css } from 'aphrodite';
-import newContext from '../Context/context';
+import PropTypes from 'prop-types';
 
-class App extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
-
-    this.logOut = this.logOut.bind(this);
-    this.logIn = this.logIn.bind(this);
-    this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
-    this.handleHideDrawer = this.handleHideDrawer.bind(this);
-
     this.state = {
-      displayDrawer: false,
-      user: {
-        email: '',
-        password: '',
-        isLoggedIn: false,
-      },
-      logOut: this.logOut,
+      email: '',
+      password: '',
+      enableSubmit: false,
     };
+
+    this.handleLoginSubmit = this.handleLoginSubmit.bind(this);
+    this.handleChangeEmail = this.handleChangeEmail.bind(this);
+    this.handleChangePassword = this.handleChangePassword.bind(this);
   }
 
-  logIn(email, password) {
-    this.setState({
-      user: {
-        email,
-        password,
-        isLoggedIn: true,
-      },
-    });
+  handleLoginSubmit(e) {
+    e.preventDefault();
+    const { email, password } = this.state;
+    this.props.logIn(email, password); // ✅ Login déclenché avec les valeurs de l'état
   }
 
-  logOut() {
-    this.setState({
-      user: {
-        email: '',
-        password: '',
-        isLoggedIn: false,
-      },
-    });
+  handleChangeEmail(e) {
+    const email = e.target.value;
+    this.setState({ email }, this.validateForm);
   }
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.handleKeyDown);
+  handleChangePassword(e) {
+    const password = e.target.value;
+    this.setState({ password }, this.validateForm);
   }
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.handleKeyDown);
-  }
-
-  handleKeyDown(event) {
-    if (event.ctrlKey && event.key === 'h') {
-      alert('Logging you out');
-      this.state.logOut(); // utilise bien le logOut du contexte
-    }
-  }
-
-  handleDisplayDrawer() {
-    this.setState({ displayDrawer: true });
-  }
-
-  handleHideDrawer() {
-    this.setState({ displayDrawer: false });
-  }
+  validateForm = () => {
+    const { email, password } = this.state;
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const isValidPassword = password.length >= 8;
+    this.setState({ enableSubmit: isValidEmail && isValidPassword });
+  };
 
   render() {
-    const { displayDrawer, user } = this.state;
-
-    const notificationsList = [
-      { id: 1, type: 'default', value: 'New course available' },
-      { id: 2, type: 'urgent', value: 'New resume available' },
-      { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
-    ];
-
-    const coursesList = [
-      { id: 1, name: 'ES6', credit: '60' },
-      { id: 2, name: 'Webpack', credit: '20' },
-      { id: 3, name: 'React', credit: '40' },
-    ];
+    const { email, password, enableSubmit } = this.state;
 
     return (
-      <newContext.Provider value={{ user: this.state.user, logOut: this.state.logOut }}>
-        <div className={css(styles.app)}>
-          <div className={css(styles.notifications)}>
-            <Notifications
-              notifications={notificationsList}
-              displayDrawer={displayDrawer}
-              handleDisplayDrawer={this.handleDisplayDrawer}
-              handleHideDrawer={this.handleHideDrawer}
+      <div className={css(styles.body)}>
+        <p>Login to access the full dashboard</p>
+        <form onSubmit={this.handleLoginSubmit}>
+          <div className={css(styles.inputGroup)}>
+            <label htmlFor="email">Email:</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={this.handleChangeEmail}
+              className={css(styles.input)}
             />
           </div>
-          <Header />
-          <div className={css(styles.body)}>
-            {user.isLoggedIn ? (
-              <BodySectionWithMarginBottom title="Course list">
-                <CourseList courses={coursesList} />
-              </BodySectionWithMarginBottom>
-            ) : (
-              <BodySectionWithMarginBottom title="Log in to continue">
-                <Login
-                  logIn={this.logIn}
-                  email={user.email}
-                  password={user.password}
-                />
-              </BodySectionWithMarginBottom>
-            )}
-            <BodySection title="News from the School">
-              <p>Holberton School News goes here</p>
-            </BodySection>
+          <div className={css(styles.inputGroup)}>
+            <label htmlFor="password">Password:</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={this.handleChangePassword}
+              className={css(styles.input)}
+            />
           </div>
-          <Footer />
-        </div>
-      </newContext.Provider>
+          <div className={css(styles.buttonWrapper)}>
+            <input
+              type="submit"
+              value="OK"
+              className={css(styles.button)}
+              disabled={!enableSubmit}
+            />
+          </div>
+        </form>
+      </div>
     );
   }
 }
 
+Login.propTypes = {
+  logIn: PropTypes.func,
+};
+
+Login.defaultProps = {
+  logIn: () => {},
+};
+
 const styles = StyleSheet.create({
-  app: {
-    margin: '0',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-  },
   body: {
-    flex: '1',
+    padding: '30px',
+    '@media (max-width: 900px)': {
+      padding: '20px',
+    },
   },
-  notifications: {
+  inputGroup: {
     display: 'flex',
-    position: 'absolute',
-    flexDirection: 'column',
-    right: '0',
-    paddingRight: '1rem',
-    minWidth: '30rem',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: '1em',
+    '@media (max-width: 900px)': {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+  },
+  input: {
+    marginLeft: '10px',
+    '@media (max-width: 900px)': {
+      marginLeft: '0',
+      marginTop: '5px',
+      width: '100%',
+    },
+  },
+  buttonWrapper: {
+    '@media (max-width: 900px)': {
+      display: 'flex',
+      justifyContent: 'flex-start',
+    },
+  },
+  button: {
+    marginLeft: '10px',
+    '@media (max-width: 900px)': {
+      marginLeft: '0',
+    },
   },
 });
 
-export default App;
+export default Login;
