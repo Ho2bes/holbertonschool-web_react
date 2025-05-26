@@ -1,14 +1,14 @@
-import React from "react";
-import Notifications from "../Notifications/Notifications";
-import Header from "../Header/Header";
-import Footer from "../Footer/Footer";
-import Login from "../Login/Login";
-import BodySection from "../BodySection/BodySection";
-import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-import CourseList from "../CourseList/CourseList";
-import { getLatestNotification } from "../utils/utils";
-import { StyleSheet, css } from "aphrodite";
-import AppContext from "../Context/context";
+import React from 'react';
+import Notifications from '../Notifications/Notifications';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import Login from '../Login/Login';
+import BodySection from '../BodySection/BodySection';
+import BodySectionWithMarginBottom from '../BodySection/BodySectionWithMarginBottom';
+import CourseList from '../CourseList/CourseList';
+import { getLatestNotification } from '../utils/utils';
+import { StyleSheet, css } from 'aphrodite';
+import AppContext from '../Context/context';
 
 class App extends React.Component {
   constructor(props) {
@@ -19,15 +19,30 @@ class App extends React.Component {
     this.handleKeyDown = this.handleKeyDown.bind(this);
     this.handleDisplayDrawer = this.handleDisplayDrawer.bind(this);
     this.handleHideDrawer = this.handleHideDrawer.bind(this);
+    this.markNotificationAsRead = this.markNotificationAsRead.bind(this);
+
+    const notificationsList = [
+      { id: 1, type: 'default', value: 'New course available' },
+      { id: 2, type: 'urgent', value: 'New resume available' },
+      { id: 3, type: 'urgent', html: { __html: getLatestNotification() } },
+    ];
+
+    const coursesList = [
+      { id: 1, name: 'ES6', credit: '60' },
+      { id: 2, name: 'Webpack', credit: '20' },
+      { id: 3, name: 'React', credit: '40' },
+    ];
 
     this.state = {
       displayDrawer: false,
       user: {
-        email: "",
-        password: "",
+        email: '',
+        password: '',
         isLoggedIn: false,
       },
       logOut: this.logOut,
+      notifications: notificationsList,
+      courses: coursesList,
     };
   }
 
@@ -44,25 +59,34 @@ class App extends React.Component {
   logOut() {
     this.setState({
       user: {
-        email: "",
-        password: "",
+        email: '',
+        password: '',
         isLoggedIn: false,
       },
     });
   }
 
+  markNotificationAsRead(id) {
+    console.log(`Notification ${id} has been marked as read`);
+    this.setState({
+      notifications: this.state.notifications.filter(
+        (notif) => notif.id !== id
+      ),
+    });
+  }
+
   componentDidMount() {
-    document.addEventListener("keydown", this.handleKeyDown);
+    document.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.handleKeyDown);
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   handleKeyDown(event) {
-    if (event.ctrlKey && event.key === "h") {
-      alert("Logging you out");
-      this.state.logOut(); // utilise bien le logOut du contexte
+    if (event.ctrlKey && event.key === 'h') {
+      alert('Logging you out');
+      this.state.logOut();
     }
   }
 
@@ -75,38 +99,25 @@ class App extends React.Component {
   }
 
   render() {
-    const { displayDrawer, user } = this.state;
-
-    const notificationsList = [
-      { id: 1, type: "default", value: "New course available" },
-      { id: 2, type: "urgent", value: "New resume available" },
-      { id: 3, type: "urgent", html: { __html: getLatestNotification() } },
-    ];
-
-    const coursesList = [
-      { id: 1, name: "ES6", credit: "60" },
-      { id: 2, name: "Webpack", credit: "20" },
-      { id: 3, name: "React", credit: "40" },
-    ];
+    const { displayDrawer, user, notifications, courses } = this.state;
 
     return (
-      <AppContext.Provider
-        value={{ user: this.state.user, logOut: this.state.logOut }}
-      >
+      <AppContext.Provider value={{ user: this.state.user, logOut: this.state.logOut }}>
         <div className={css(styles.app)}>
           <div className={css(styles.notifications)}>
             <Notifications
-              notifications={notificationsList}
+              notifications={notifications}
               displayDrawer={displayDrawer}
               handleDisplayDrawer={this.handleDisplayDrawer}
               handleHideDrawer={this.handleHideDrawer}
+              markNotificationAsRead={this.markNotificationAsRead}
             />
           </div>
           <Header />
           <div className={css(styles.body)}>
             {user.isLoggedIn ? (
               <BodySectionWithMarginBottom title="Course list">
-                <CourseList courses={coursesList} />
+                <CourseList courses={courses} />
               </BodySectionWithMarginBottom>
             ) : (
               <BodySectionWithMarginBottom title="Log in to continue">
@@ -130,21 +141,21 @@ class App extends React.Component {
 
 const styles = StyleSheet.create({
   app: {
-    margin: "0",
-    minHeight: "100vh",
-    display: "flex",
-    flexDirection: "column",
+    margin: '0',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
   },
   body: {
-    flex: "1",
+    flex: '1',
   },
   notifications: {
-    display: "flex",
-    position: "absolute",
-    flexDirection: "column",
-    right: "0",
-    paddingRight: "1rem",
-    minWidth: "30rem",
+    display: 'flex',
+    position: 'absolute',
+    flexDirection: 'column',
+    right: '0',
+    paddingRight: '1rem',
+    minWidth: '30rem',
   },
 });
 
