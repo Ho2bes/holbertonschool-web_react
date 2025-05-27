@@ -1,8 +1,7 @@
-// BodySection.jsx
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
 
-class BodySection extends React.Component {
+class BodySection extends Component {
   render() {
     const { title, children } = this.props;
 
@@ -16,8 +15,8 @@ class BodySection extends React.Component {
 }
 
 BodySection.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   children: PropTypes.node,
 };
 
-export default BodySection; // ✅ AJOUTE CECI
+export default BodySection;

@@ -1,21 +1,25 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
-import BodySection from './BodySection';
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import BodySectionWithMarginBottom from "./BodySectionWithMarginBottom";
+import { StyleSheetTestUtils } from "aphrodite";
 
-describe('BodySectionWithMarginBottom component', () => {
-  const wrapper = shallow(
-    <BodySectionWithMarginBottom title="title test">
-      <p>child content</p>
-    </BodySectionWithMarginBottom>
-  );
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-  it('contains a div with class bodySectionWithMargin', () => {
-    expect(wrapper.find('div.bodySectionWithMargin')).toHaveLength(1);
-  });
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-  it('renders the BodySection component', () => {
-    expect(wrapper.find(BodySection)).toHaveLength(1);
-    expect(wrapper.find(BodySection).prop('title')).toBe('title test');
+describe("<BodySectionWithMarginBottom />", () => {
+  test("renders the correct title and content", () => {
+    render(
+      <BodySectionWithMarginBottom title="test title">
+        <p>test children node</p>
+      </BodySectionWithMarginBottom>
+    );
+
+    expect(screen.getByText(/test title/i)).toBeInTheDocument();
+    expect(screen.getByText(/test children node/i)).toBeInTheDocument();
   });
 });

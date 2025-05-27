@@ -1,15 +1,17 @@
-import React from 'react';
+import React from "react";
 
 const WithLogging = (WrappedComponent) => {
-  class WithLoggingHOC extends React.Component {
+  class HOC extends React.Component {
     componentDidMount() {
-      console.log(`Component ${getDisplayName(WrappedComponent)} is mounted`);
+      const name =
+        WrappedComponent.displayName || WrappedComponent.name || "Component";
+      console.log(`Component ${name} is mounted`);
     }
 
     componentWillUnmount() {
-      console.log(
-        `Component ${getDisplayName(WrappedComponent)} is going to unmount`
-      );
+      const name =
+        WrappedComponent.displayName || WrappedComponent.name || "Component";
+      console.log(`Component ${name} is going to unmount`);
     }
 
     render() {
@@ -17,13 +19,11 @@ const WithLogging = (WrappedComponent) => {
     }
   }
 
-  // Helper to determine display name
-  const getDisplayName = (Component) =>
-    Component.displayName || Component.name || 'Component';
+  const name =
+    WrappedComponent.displayName || WrappedComponent.name || "Component";
+  HOC.displayName = `WithLogging(${name})`;
 
-  WithLoggingHOC.displayName = `WithLogging(${getDisplayName(WrappedComponent)})`;
-
-  return WithLoggingHOC;
+  return HOC;
 };
 
 export default WithLogging;
