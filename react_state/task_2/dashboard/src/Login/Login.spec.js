@@ -1,42 +1,93 @@
-// task_2/dashboard/src/Login/Login.spec.js
-import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Login from "./Login";
+import { StyleSheetTestUtils } from 'aphrodite';
 
-describe("Login Component", () => {
-  test("submit button disabled with invalid email or short password", () => {
-    render(<Login logIn={jest.fn()} email="" password="" />);
+beforeAll(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
+});
 
-    const submitButton = screen.getByRole("button", { name: /OK/i });
-    expect(submitButton).toBeDisabled();
+afterAll(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+});
 
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
+test('the text content within the 2 p elements in the app-body and app-footer divs matches', () => {
+  render(<Login />);
+  const divbody = screen.getByText(/Login to access the full dashboard/i);
+  expect(divbody).toBeInTheDocument();
+});
 
-    fireEvent.change(emailInput, { target: { value: "invalid-email" } });
-    fireEvent.change(passwordInput, { target: { value: "123" } });
+test('renders 2 input elements', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/Email/i);
+  const labelpassword = screen.getByLabelText(/Password/i);
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
 
-    expect(submitButton).toBeDisabled();
+test('renders 2 label elements with the text Email and Password', () => {
+  render(<Login />);
+  const labelemail = screen.getByLabelText(/email/i);
+  const labelpassword = screen.getByLabelText(/password/i);
+  expect(labelemail).toBeInTheDocument();
+  expect(labelpassword).toBeInTheDocument();
+});
 
-    fireEvent.change(emailInput, { target: { value: "valid@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
+test('renders a button with the text OK', () => {
+  render(<Login />);
+  const button = screen.getByRole('button', { name: /ok/i });
+  expect(button).toBeInTheDocument();
+});
 
-    expect(submitButton).toBeEnabled();
-  });
+// ✅ Nouveaux tests demandés dans la task 1 :
 
-  test("calls logIn prop with email and password on submit", () => {
-    const mockLogIn = jest.fn();
-    render(<Login logIn={mockLogIn} email="" password="" />);
+test('Submit button is disabled by default', () => {
+  render(<Login />);
+  const submitBtn = screen.getByRole('button', { name: /ok/i });
+  expect(submitBtn).toBeDisabled();
+});
 
-    const emailInput = screen.getByLabelText(/Email:/i);
-    const passwordInput = screen.getByLabelText(/Password:/i);
-    const submitButton = screen.getByRole("button", { name: /OK/i });
+test('Submit button is enabled only with valid email and password', () => {
+  render(<Login />);
+  const emailInput = screen.getByLabelText(/email/i);
+  const passwordInput = screen.getByLabelText(/password/i);
+  const submitBtn = screen.getByRole('button', { name: /ok/i });
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "password123" } });
-    fireEvent.click(submitButton);
+  // Vide (invalide)
+  fireEvent.change(emailInput, { target: { value: '' } });
+  fireEvent.change(passwordInput, { target: { value: '' } });
+  expect(submitBtn).toBeDisabled();
 
-    expect(mockLogIn).toHaveBeenCalledTimes(1);
-    expect(mockLogIn).toHaveBeenCalledWith("test@example.com", "password123");
-  });
+  // Email invalide
+  fireEvent.change(emailInput, { target: { value: 'invalid' } });
+  fireEvent.change(passwordInput, { target: { value: '12345678' } });
+  expect(submitBtn).toBeDisabled();
+
+  // Mot de passe trop court
+  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
+  fireEvent.change(passwordInput, { target: { value: 'short' } });
+  expect(submitBtn).toBeDisabled();
+
+  // Valide
+  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
+  fireEvent.change(passwordInput, { target: { value: '12345678' } });
+  expect(submitBtn).toBeEnabled();
+});
+
+test('calls logIn with email and password when form is submitted', () => {
+  const logInMock = jest.fn();
+  render(<Login logIn={logInMock} />);
+
+  const emailInput = screen.getByLabelText(/email/i);
+  const passwordInput = screen.getByLabelText(/password/i);
+  const submitBtn = screen.getByRole('button', { name: /ok/i });
+
+  // Entrée de données valides
+  fireEvent.change(emailInput, { target: { value: 'test@mail.com' } });
+  fireEvent.change(passwordInput, { target: { value: '12345678' } });
+
+  // Soumission du formulaire
+  fireEvent.click(submitBtn);
+
+  // Vérifie que logIn est bien appelé avec les bonnes valeurs
+  expect(logInMock).toHaveBeenCalledWith('test@mail.com', '12345678');
 });
