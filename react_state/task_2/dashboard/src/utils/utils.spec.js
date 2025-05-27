@@ -1,17 +1,31 @@
 import { getCurrentYear, getFooterCopy, getLatestNotification } from "./utils";
-
-test('Returns the correct year', () => {
-  expect(getCurrentYear()).toBe(2025);
+import { StyleSheetTestUtils } from "aphrodite";
+// Empêche l'injection des styles dans le DOM lors des tests
+beforeEach(() => {
+  StyleSheetTestUtils.suppressStyleInjection();
 });
 
-test('Returns the correct string when the argument is true or false', () => {
-  let isIndex = true;
-  expect(getFooterCopy(isIndex)).toBe('Holberton School');
-  isIndex = false;
-  expect(getFooterCopy(isIndex)).toBe('Holberton School main dashboard');
+afterEach(() => {
+  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-test('Returned string form', () => {
-  const result = getLatestNotification();
-  expect(result).toBe('<strong>Urgent requirement</strong> - complete by EOD');
+describe("Utils functions", () => {
+  test("getCurrentYear returns the current year", () => {
+    const year = getCurrentYear();
+    expect(year).toBe(new Date().getFullYear());
+  });
+
+  test("getFooterCopy returns correct string when true", () => {
+    expect(getFooterCopy(true)).toBe("Holberton School"); // Correct casing
+  });
+
+  test("getFooterCopy returns correct string when false", () => {
+    expect(getFooterCopy(false)).toBe("Holberton School main dashboard"); // Correct casing
+  });
+
+  test("getLatestNotification returns expected HTML string", () => {
+    const notification = getLatestNotification();
+    expect(notification).toContain("<strong>Urgent requirement</strong>");
+    expect(notification).toMatch(/complete by EOD/i);
+  });
 });

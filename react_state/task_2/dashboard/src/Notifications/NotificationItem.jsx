@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { StyleSheet, css } from 'aphrodite';
+import React from "react";
+import PropTypes from "prop-types";
+import { StyleSheet, css } from "aphrodite";
 
 class NotificationItem extends React.PureComponent {
   render() {
     const { type, html, value, id, markAsRead } = this.props;
 
     const styleClass = css(
-      type === 'urgent' ? styles.urgent : styles.default,
+      type === "urgent" ? styles.urgent : styles.default,
       styles.responsive
     );
 
@@ -36,17 +36,17 @@ class NotificationItem extends React.PureComponent {
 
 const styles = StyleSheet.create({
   default: {
-    color: 'blue',
+    color: "blue",
   },
   urgent: {
-    color: 'red',
+    color: "red",
   },
   responsive: {
-    '@media (max-width: 900px)': {
-      width: '100%',
-      borderBottom: '1px solid black',
-      fontSize: '20px',
-      padding: '10px 8px',
+    "@media (max-width: 900px)": {
+      width: "100%",
+      borderBottom: "1px solid black",
+      fontSize: "20px",
+      padding: "10px 8px",
     },
   },
 });
@@ -62,7 +62,7 @@ NotificationItem.propTypes = {
 };
 
 NotificationItem.defaultProps = {
-  type: 'default',
+  type: "default",
   markAsRead: () => {},
 };
 

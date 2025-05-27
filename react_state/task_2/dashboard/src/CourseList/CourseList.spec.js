@@ -1,69 +1,31 @@
-import { render, screen } from "@testing-library/react";
-import CourseListRow from "./CourseListRow";
-import { StyleSheetTestUtils } from 'aphrodite';
-
-beforeAll(() => {
+import { render } from "@testing-library/react";
+import CourseList from "./CourseList";
+import { StyleSheetTestUtils } from "aphrodite";
+// Empêche l'injection des styles dans le DOM lors des tests
+beforeEach(() => {
   StyleSheetTestUtils.suppressStyleInjection();
 });
 
-afterAll(() => {
+afterEach(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
-
-describe('When isHeader is true', () => {
-  test('renders one <th> with colspan=2 when textSecondCell is not provided', () => {
-    render(
-      <table>
-        <tbody>
-          <CourseListRow isHeader={true} textFirstCell="Header Only" />
-        </tbody>
-      </table>
-    );
-    const col = screen.getByRole('columnheader');
-    expect(col).toHaveAttribute('colspan', '2');
+describe("CourseList", () => {
+  it("renders 5 rows when it receives an array of 5 courses", () => {
+    const courses = [
+      { id: 1, name: "ES6", credit: 60 },
+      { id: 2, name: "Webpack", credit: 20 },
+      { id: 3, name: "React", credit: 40 },
+      { id: 4, name: "Node.js", credit: 50 },
+      { id: 5, name: "JavaScript", credit: 30 },
+    ];
+    const { container } = render(<CourseList courses={courses} />);
+    const rows = container.querySelectorAll("tr");
+    expect(rows.length).toBe(7);
   });
 
-  test('renders two <th> cells when textSecondCell is provided', () => {
-    render(
-      <table>
-        <tbody>
-          <CourseListRow isHeader={true} textFirstCell="Header1" textSecondCell="Header2" />
-        </tbody>
-      </table>
-    );
-    const cols = screen.getAllByRole('columnheader');
-    expect(cols).toHaveLength(2);
+  it("renders 1 row when it receives an empty array", () => {
+    const { container } = render(<CourseList courses={[]} />);
+    const rows = container.querySelectorAll("tr");
+    expect(rows.length).toBe(1);
   });
-
-  // Ces tests de style échouent à cause d’Aphrodite
-  /*
-  test('Header row has background color #deb5b545', () => {
-    const row = screen.getByRole('row');
-    expect(row).toHaveStyle({ backgroundColor: 'rgba(222, 181, 181, 0.27)' });
-  });
-  */
-});
-
-describe('When isHeader is false', () => {
-  test('renders two <td> cells correctly with text', () => {
-    render(
-      <table>
-        <tbody>
-          <CourseListRow isHeader={false} textFirstCell="Cell1" textSecondCell="Cell2" />
-        </tbody>
-      </table>
-    );
-    const cells = screen.getAllByRole('cell');
-    expect(cells).toHaveLength(2);
-    expect(cells[0]).toHaveTextContent("Cell1");
-    expect(cells[1]).toHaveTextContent("Cell2");
-  });
-
-  // À commenter aussi à cause d’Aphrodite
-  /*
-  test('Regular row has background color #f5f5f5ab', () => {
-    const row = screen.getByRole('row');
-    expect(row).toHaveStyle({ backgroundColor: 'rgba(245, 245, 245, 0.67)' });
-  });
-  */
 });

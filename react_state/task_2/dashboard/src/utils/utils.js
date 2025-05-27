@@ -1,12 +1,15 @@
 export function getCurrentYear() {
-  const date = new Date();
-  return date.getFullYear();
+  return new Date().getFullYear();
 }
-
+// داخل utils.js أو الملف الذي يحتوي الدالة
 export function getFooterCopy(isIndex) {
-  return isIndex ? 'Holberton School' : 'Holberton School main dashboard';
+  if (isIndex) {
+    return "Holberton School";
+  } else {
+    return "Holberton School main dashboard"; // يجب أن تُرجع هذه القيمة عند `false`
+  }
 }
 
 export function getLatestNotification() {
-  return '<strong>Urgent requirement</strong> - complete by EOD';
+  return "<strong>Urgent requirement</strong> - complete by EOD";
 }
