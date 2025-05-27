@@ -1,7 +1,7 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import BodySectionWithMarginBottom from './BodySectionWithMarginBottom';
-import { StyleSheetTestUtils } from 'aphrodite';
+import React from "react";
+import { render, screen } from "@testing-library/react";
+import BodySectionWithMarginBottom from "./BodySectionWithMarginBottom";
+import { StyleSheetTestUtils } from "aphrodite";
 
 beforeAll(() => {
   StyleSheetTestUtils.suppressStyleInjection();
@@ -11,8 +11,8 @@ afterAll(() => {
   StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
 });
 
-describe('<BodySectionWithMarginBottom />', () => {
-  test('renders the correct title and content', () => {
+describe("<BodySectionWithMarginBottom />", () => {
+  test("renders the correct title and content", () => {
     render(
       <BodySectionWithMarginBottom title="test title">
         <p>test children node</p>

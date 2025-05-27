@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, css } from 'aphrodite';
-import CourseListRow from './CourseListRow';
+import React from "react";
+import CourseListRow from "./CourseListRow";
+import { StyleSheet, css } from "aphrodite";
 
 class CourseList extends React.Component {
   static defaultProps = {
@@ -15,8 +15,15 @@ class CourseList extends React.Component {
         {courses.length > 0 ? (
           <>
             <thead>
-              <CourseListRow isHeader={true} textFirstCell="Available courses" />
-              <CourseListRow isHeader={true} textFirstCell="Course name" textSecondCell="Credit" />
+              <CourseListRow
+                isHeader={true}
+                textFirstCell="Available courses"
+              />
+              <CourseListRow
+                isHeader={true}
+                textFirstCell="Course name"
+                textSecondCell="Credit"
+              />
             </thead>
             <tbody>
               {courses.map((course) => (
@@ -30,7 +37,10 @@ class CourseList extends React.Component {
           </>
         ) : (
           <tbody>
-            <CourseListRow isHeader={true} textFirstCell="No course available yet" />
+            <CourseListRow
+              isHeader={true}
+              textFirstCell="No course available yet"
+            />
           </tbody>
         )}
       </table>
@@ -40,10 +50,19 @@ class CourseList extends React.Component {
 
 const styles = StyleSheet.create({
   courseList: {
-    width: '100%',
-    border: '1px solid #ddd',
-    marginTop: '30px',
-    borderCollapse: 'collapse',
+    width: "100%",
+    borderCollapse: "collapse",
+    th: {
+      border: "1px solid #ccc",
+      padding: "8px",
+      textAlign: "left",
+      backgroundColor: "#f4f4f4",
+    },
+    td: {
+      border: "1px solid #ccc",
+      padding: "8px",
+      textAlign: "left",
+    },
   },
 });
 

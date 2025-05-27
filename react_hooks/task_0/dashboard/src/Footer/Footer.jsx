@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { StyleSheet, css } from 'aphrodite';
-import { getCurrentYear, getFooterCopy } from '../utils/utils';
-import AppContext from '../Context/context';
+import { useContext } from "react";
+import { StyleSheet, css } from "aphrodite";
+import { getCurrentYear, getFooterCopy } from "../utils/utils";
+import AppContext from "../Context/context";
 
 export default function Footer() {
   const { user } = useContext(AppContext); // 👈 consomme le contexte
@@ -22,12 +22,12 @@ export default function Footer() {
 
 const styles = StyleSheet.create({
   footer: {
-    position: 'fixed',
+    position: "fixed",
     bottom: 0,
-    width: '100%',
-    textAlign: 'center',
-    fontStyle: 'italic',
-    borderTop: '3px solid #e11d3f',
-    padding: '1rem 0',
+    width: "100%",
+    textAlign: "center",
+    fontStyle: "italic",
+    borderTop: "3px solid #e11d3f",
+    padding: "1rem 0",
   },
 });
