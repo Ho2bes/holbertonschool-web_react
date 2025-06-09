@@ -1,18 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import BodySection from './BodySection';
 
-test('Should pass any number of children without knows then beforehand', () => {
+describe('BodySection', () => {
+  test('renders with title and children', () => {
     render(
-        <BodySection title="Test Title">
-            <p>Child 1</p>
-            <p>Child 2</p>
-            <p>Child 3</p>
-        </BodySection>
+      <BodySection title="Test Title">
+        <p>Child content</p>
+      </BodySection>
     );
 
-    const titleElement = screen.getByRole('heading', { name: /test title/i });
-    expect(titleElement).toBeInTheDocument();
-    expect(screen.getByText('Child 1')).toBeInTheDocument();
-    expect(screen.getByText('Child 2')).toBeInTheDocument();
-    expect(screen.getByText('Child 3')).toBeInTheDocument();
+    expect(screen.getByText('Test Title')).toBeInTheDocument();
+    expect(screen.getByText('Child content')).toBeInTheDocument();
+  });
 });

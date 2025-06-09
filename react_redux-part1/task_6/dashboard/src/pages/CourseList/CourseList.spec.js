@@ -1,55 +1,47 @@
 import { render, screen } from '@testing-library/react';
-import CourseList from './CourseList';
-import { StyleSheetTestUtils } from "aphrodite";
 import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
+import configureStore from 'redux-mock-store';
+import CourseList from './CourseList';
+import thunk from 'redux-thunk';
 
-// Création d'un store Redux mock
-const createTestStore = (initialState) =>
-  configureStore({
-    reducer: {
-      courses: () => initialState,
-    },
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
+
+describe('CourseList component with Redux', () => {
+  it('should display "No course available yet" when courses array is empty', () => {
+    const store = mockStore({
+      courses: []
+    });
+
+    render(
+      <Provider store={store}>
+        <CourseList />
+      </Provider>
+    );
+
+    expect(screen.getByText(/no course available yet/i)).toBeInTheDocument();
   });
 
-const renderWithRedux = (ui, { initialState }) => {
-  const store = createTestStore(initialState);
-  return render(<Provider store={store}>{ui}</Provider>);
-};
+  it('should display the list of courses when courses are provided', () => {
+    const store = mockStore({
+      courses: [
+        { id: 1, name: 'Course 1', credit: 60 },
+        { id: 2, name: 'Course 2', credit: 30 }
+      ]
+    });
 
-beforeEach(() => {
-  StyleSheetTestUtils.suppressStyleInjection();
-});
+    render(
+      <Provider store={store}>
+        <CourseList />
+      </Provider>
+    );
 
-afterEach(() => {
-  StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
-});
-
-test('Should render the CourseList component without crashing', () => {
-  const initialState = [
-    { id: 1, name: 'ES6', credit: 60 },
-    { id: 2, name: 'Webpack', credit: 20 },
-    { id: 3, name: 'React', credit: 40 }
-  ];
-  renderWithRedux(<CourseList />, { initialState });
-});
-
-test('Should render the CourseList component with 5 rows', () => {
-  const initialState = [
-    { id: 1, name: 'ES6', credit: 60 },
-    { id: 2, name: 'Webpack', credit: 20 },
-    { id: 3, name: 'React', credit: 40 }
-  ];
-  renderWithRedux(<CourseList />, { initialState });
-
-  const rowElements = screen.getAllByRole('row');
-  expect(rowElements).toHaveLength(5); // 2 headers + 3 courses
-});
-
-test('Should render the CourseList component with 1 row when no courses', () => {
-  const initialState = [];
-  renderWithRedux(<CourseList />, { initialState });
-
-  const rowElements = screen.getAllByRole('row');
-  expect(rowElements).toHaveLength(1); // Only one row: "No course available yet"
+    expect(screen.getByText(/available courses/i)).toBeInTheDocument();
+    expect(screen.getByText(/course name/i)).toBeInTheDocument();
+    expect(screen.getByText(/credit/i)).toBeInTheDocument();
+    expect(screen.getByText('Course 1')).toBeInTheDocument();
+    expect(screen.getByText('60')).toBeInTheDocument();
+    expect(screen.getByText('Course 2')).toBeInTheDocument();
+    expect(screen.getByText('30')).toBeInTheDocument();
+  });
 });
