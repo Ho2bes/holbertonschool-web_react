@@ -7,19 +7,17 @@ import {
   markNotificationAsRead,
   showNotificationDrawer,
   hideNotificationDrawer,
-} from '../../redux/notifications/notificationsSlice'; // adapte le path selon ton arborescence
+} from '../../redux/notifications/notificationsSlice';
 
 const styles = StyleSheet.create({
   notificationTitle: {
-    float: 'right',
     position: 'absolute',
     right: '10px',
     top: '2px',
     cursor: 'pointer',
   },
   notifications: {
-    border: 'dotted',
-    borderColor: 'crimson',
+    border: '1px dotted crimson',
     marginTop: '1%',
     paddingLeft: '1rem',
     marginBottom: '1rem',
@@ -56,7 +54,7 @@ const Notifications = memo(function Notifications() {
   const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
 
   return (
-    <>
+    <div>
       <div className={css(styles.notificationTitle)} onClick={handleDisplayDrawer}>
         Your notifications
       </div>
@@ -91,7 +89,7 @@ const Notifications = memo(function Notifications() {
           )}
         </div>
       )}
-    </>
+    </div>
   );
 });
 
