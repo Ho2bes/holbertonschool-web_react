@@ -12,16 +12,12 @@ import notificationsReducer, {
 
 // Mock des actions
 jest.mock('../../redux/notifications/notificationsSlice', () => ({
-  ...jest.requireActual('../../redux/notifications/notificationsSlice'),
-  markNotificationAsRead: jest.fn((id) => ({ type: 'notifications/markNotificationAsRead', payload: id })),
-  showNotificationDrawer: jest.fn(() => ({ type: 'notifications/showNotificationDrawer' })),
-  hideNotificationDrawer: jest.fn(() => ({ type: 'notifications/hideNotificationDrawer' })),
+  markNotificationAsRead: jest.fn(),
+  showNotificationDrawer: jest.fn(),
+  hideNotificationDrawer: jest.fn(),
 }));
 
-const renderWithRedux = (
-  component,
-  { preloadedState } = {}
-) => {
+const renderWithRedux = (component, { preloadedState } = {}) => {
   const store = configureStore({
     reducer: {
       notifications: notificationsReducer,
@@ -151,7 +147,7 @@ describe('Notifications Component', () => {
   });
 
   it('Is a functional memoized component', () => {
-    expect(typeof Notifications.type).toBe('function');
+    expect(typeof Notifications).toBe('function');
     expect(Notifications.$$typeof.toString()).toBe('Symbol(react.memo)');
   });
 });

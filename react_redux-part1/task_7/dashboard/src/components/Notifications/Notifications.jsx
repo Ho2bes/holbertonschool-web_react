@@ -43,15 +43,22 @@ const styles = StyleSheet.create({
   },
 });
 
-const Notifications = memo(function Notifications() {
+const Notifications = memo(() => {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notifications.items || []);
   const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
 
-  const handleDisplayDrawer = () => dispatch(showNotificationDrawer());
-  const handleHideDrawer = () => dispatch(hideNotificationDrawer());
+  const handleDisplayDrawer = () => {
+    dispatch(showNotificationDrawer());
+  };
 
-  const handleMarkAsRead = (id) => dispatch(markNotificationAsRead(id));
+  const handleHideDrawer = () => {
+    dispatch(hideNotificationDrawer());
+  };
+
+  const handleMarkAsRead = (id) => {
+    dispatch(markNotificationAsRead(id));
+  };
 
   return (
     <div>
@@ -63,7 +70,11 @@ const Notifications = memo(function Notifications() {
           {notifications.length > 0 ? (
             <>
               <p>Here is the list of notifications</p>
-              <button onClick={handleHideDrawer} aria-label="Close" className={css(styles.notificationsButton)}>
+              <button
+                onClick={handleHideDrawer}
+                aria-label="Close"
+                className={css(styles.notificationsButton)}
+              >
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
