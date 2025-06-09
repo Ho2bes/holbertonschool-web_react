@@ -1,23 +1,25 @@
 import { memo } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
 import NotificationItem from '../NotificationItem/NotificationItem';
-import { useSelector, useDispatch } from 'react-redux';
 import {
-  markNotificationAsRead,
-  showNotificationDrawer,
-  hideNotificationDrawer,
-} from '../../redux/notifications/notificationsSlice';
+  showDrawer,
+  hideDrawer,
+  markAsRead,
+} from '../../redux/notifications/notificationSlice';
 
 const styles = StyleSheet.create({
   notificationTitle: {
+    float: 'right',
     position: 'absolute',
     right: '10px',
     top: '2px',
     cursor: 'pointer',
   },
   notifications: {
-    border: '1px dotted crimson',
+    border: 'dotted',
+    borderColor: 'crimson',
     marginTop: '1%',
     paddingLeft: '1rem',
     marginBottom: '1rem',
@@ -43,26 +45,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const Notifications = memo(() => {
+const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
-  const notifications = useSelector((state) => state.notifications.items || []);
   const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
-
-  const handleDisplayDrawer = () => {
-    dispatch(showNotificationDrawer());
-  };
-
-  const handleHideDrawer = () => {
-    dispatch(hideNotificationDrawer());
-  };
-
-  const handleMarkAsRead = (id) => {
-    dispatch(markNotificationAsRead(id));
-  };
+  const notifications = useSelector((state) => state.notifications.notifications);
 
   return (
-    <div>
-      <div className={css(styles.notificationTitle)} onClick={handleDisplayDrawer}>
+    <>
+      <div
+        className={css(styles.notificationTitle)}
+        onClick={() => dispatch(showDrawer())}
+      >
         Your notifications
       </div>
       {displayDrawer && (
@@ -71,23 +64,23 @@ const Notifications = memo(() => {
             <>
               <p>Here is the list of notifications</p>
               <button
-                onClick={handleHideDrawer}
+                onClick={() => dispatch(hideDrawer())}
                 aria-label="Close"
                 className={css(styles.notificationsButton)}
               >
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
-                {notifications.map((notification) => (
+                {notifications.map((notif) => (
                   <NotificationItem
-                    key={notification.id}
-                    id={notification.id}
-                    type={notification.type}
-                    value={notification.value}
-                    html={notification.html}
-                    markAsRead={() => handleMarkAsRead(notification.id)}
+                    key={notif.id}
+                    id={notif.id}
+                    type={notif.type}
+                    value={notif.value}
+                    html={notif.html}
+                    markAsRead={() => dispatch(markAsRead(notif.id))}
                     className={
-                      notification.type === 'urgent'
+                      notif.type === 'urgent'
                         ? css(styles.notificationTypeUrgent)
                         : css(styles.notificationTypeDefault)
                     }
@@ -100,7 +93,7 @@ const Notifications = memo(() => {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 });
 

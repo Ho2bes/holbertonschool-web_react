@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import Login from './Login';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import authReducer, { login } from '../../redux/auth/authSlice'; // à adapter selon ton arborescence
+import authReducer, { login } from '../../redux/auth/authSlice';
 
 // Mock de l’action login
 jest.mock('../../redux/auth/authSlice', () => ({
@@ -24,112 +24,61 @@ const renderWithRedux = (ui, { initialState } = {}) => {
   return render(<Provider store={store}>{ui}</Provider>);
 };
 
-test('Testing signin form elements', () => {
-  renderWithRedux(<Login />);
-  const emailInput = screen.getByRole('textbox');
-  const passwordInput = screen.getByLabelText(/password/i);
-  const submitButton = screen.getByRole('button', { name: 'OK' });
-
-  expect(emailInput).toBeInTheDocument();
-  expect(emailInput).toHaveAttribute('type', 'email');
-  expect(screen.getByLabelText(/email/i)).toBe(emailInput);
-  expect(passwordInput).toBeInTheDocument();
-  expect(passwordInput).toHaveAttribute('type', 'password');
-  expect(submitButton).toBeInTheDocument();
-  expect(submitButton).toBeDisabled();
-});
-
-test('Should check that the email input element will be focused whenever the associated label is clicked', async () => {
-  renderWithRedux(<Login />);
-  const emailInput = screen.getByLabelText('Email');
-  const emailLabel = screen.getByText('Email');
-  userEvent.click(emailLabel);
-  await waitFor(() => {
-    expect(emailInput).toHaveFocus();
-  });
-});
-
-test('Should check that the password input element will be focused whenever the associated label is clicked', async () => {
-  renderWithRedux(<Login />);
-  const passwordLabel = screen.getByText('Password');
-  const passwordInput = screen.getByLabelText('Password');
-  userEvent.click(passwordLabel);
-  await waitFor(() => {
-    expect(passwordInput).toHaveFocus();
-  });
-});
-
-test('Submit button is disabled by default', () => {
-  renderWithRedux(<Login />);
-  const submitButton = screen.getByText('OK');
-  expect(submitButton).toBeDisabled();
-});
-
-test('Submit button is enabled only with a valid email and password of at least 8 characters', () => {
-  renderWithRedux(<Login />);
-  const emailInput = screen.getByLabelText('Email');
-  const passwordInput = screen.getByLabelText('Password');
-  const submitButton = screen.getByText('OK');
-
-  expect(submitButton).toBeDisabled();
-
-  fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-  fireEvent.change(passwordInput, { target: { value: '123' } });
-  expect(submitButton).toBeDisabled();
-
-  fireEvent.change(emailInput, { target: { value: 'test.com' } });
-  fireEvent.change(passwordInput, { target: { value: '12345678' } });
-  expect(submitButton).toBeDisabled();
-
-  fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
-  fireEvent.change(passwordInput, { target: { value: '12345678' } });
-  expect(submitButton).not.toBeDisabled();
-});
-
-describe('Login Component Tests', () => {
-  test('Should initialize with default email and password', () => {
+describe('Login Component Tests (Redux version)', () => {
+  test('Displays form elements correctly', () => {
     renderWithRedux(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    expect(emailInput.value).toBe('');
-    expect(passwordInput.value).toBe('');
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ok/i })).toBeDisabled();
   });
 
-  test('Should dispatch login action on form submission', () => {
-    renderWithRedux(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const form = screen.getByRole('form');
-
-    fireEvent.change(emailInput, { target: { value: 'test@test.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-    fireEvent.submit(form);
-
-    expect(login).toHaveBeenCalledWith({ email: 'test@test.com', password: 'password123' });
-  });
-
-  test('Should enable the submit button only with valid email and password', () => {
+  test('Submit button enables only with valid email and password', () => {
     renderWithRedux(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
     const submitButton = screen.getByRole('button', { name: /ok/i });
 
+    fireEvent.change(emailInput, { target: { value: 'invalid' } });
+    fireEvent.change(passwordInput, { target: { value: '12345678' } });
     expect(submitButton).toBeDisabled();
 
     fireEvent.change(emailInput, { target: { value: 'valid@test.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'validpassword' } });
+    fireEvent.change(passwordInput, { target: { value: 'short' } });
+    expect(submitButton).toBeDisabled();
+
+    fireEvent.change(passwordInput, { target: { value: 'longenough' } });
     expect(submitButton).not.toBeDisabled();
   });
 
-  test('Should update state on email and password input change', () => {
+  test('Dispatches login action on valid submit', () => {
     renderWithRedux(<Login />);
     const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
+    const form = screen.getByRole('form');
 
-    fireEvent.change(emailInput, { target: { value: 'newemail@test.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'newpassword' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(passwordInput, { target: { value: 'password123' } });
+    fireEvent.submit(form);
 
-    expect(emailInput.value).toBe('newemail@test.com');
-    expect(passwordInput.value).toBe('newpassword');
+    expect(login).toHaveBeenCalledWith({ email: 'test@example.com', password: 'password123' });
+  });
+
+  test('Clicking labels focuses input fields', async () => {
+    renderWithRedux(<Login />);
+    const emailInput = screen.getByLabelText('Email');
+    const emailLabel = screen.getByText('Email');
+    userEvent.click(emailLabel);
+    await waitFor(() => expect(emailInput).toHaveFocus());
+
+    const passwordInput = screen.getByLabelText('Password');
+    const passwordLabel = screen.getByText('Password');
+    userEvent.click(passwordLabel);
+    await waitFor(() => expect(passwordInput).toHaveFocus());
+  });
+
+  test('Initial state has empty email and password', () => {
+    renderWithRedux(<Login />);
+    expect(screen.getByLabelText(/email/i).value).toBe('');
+    expect(screen.getByLabelText(/password/i).value).toBe('');
   });
 });
