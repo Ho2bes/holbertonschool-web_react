@@ -11,17 +11,16 @@
     "test": "jest"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.8.2",
+    "@reduxjs/toolkit": "^2.5.0",
     "aphrodite": "^2.4.0",
-    "axios": "^1.9.0",
+    "axios": "^1.7.9",
     "identity-obj-proxy": "^3.0.0",
     "jest-mock-axios": "^4.8.0",
     "jsdom": "^25.0.0",
+    "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-redux": "^9.2.0",
-    "redux": "^5.0.1",
-    "toolkit": "^1.5.4"
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.24.8",
@@ -47,10 +46,17 @@
     "testEnvironment": "jsdom",
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/fileTransformer.js",
-      "^.+\\.(css|less|scss)$": "identity-obj-proxy"
+      "^.+\\.(css|less|scss)$": "identity-obj-proxy",
+      "^aphrodite$": "<rootDir>/__mocks__/aphrodite.js"
     },
     "setupFilesAfterEnv": [
       "./setupTests.js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "node"
     ]
   }
 }

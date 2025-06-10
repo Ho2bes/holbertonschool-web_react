@@ -1,6 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
+import { useSelector } from 'react-redux';
 import CourseListRow from './CourseListRow/CourseListRow';
 import WithLogging from '../../components/HOC/WithLogging';
 
@@ -21,7 +20,7 @@ const styles = StyleSheet.create({
 });
 
 function CourseList() {
-  const courses = useSelector((state) => state.courses || []);
+  const courses = useSelector((state) => state.courses.courses); // ✅ correct ici
 
   return (
     <div className={css(styles.courses)}>

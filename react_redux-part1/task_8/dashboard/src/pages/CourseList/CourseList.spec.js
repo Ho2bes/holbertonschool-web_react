@@ -1,33 +1,39 @@
 import { render, screen } from '@testing-library/react';
+import CourseList from '../../pages/CourseList/CourseList';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import CourseList from './CourseList';
-import thunk from 'redux-thunk';
+import { StyleSheetTestUtils } from 'aphrodite';
 
-const middlewares = [thunk];
-const mockStore = configureStore(middlewares);
+const mockStore = configureStore([]);
 
-describe('CourseList component with Redux', () => {
-  it('should display "No course available yet" when courses array is empty', () => {
-    const store = mockStore({
-      courses: []
-    });
-
-    render(
-      <Provider store={store}>
-        <CourseList />
-      </Provider>
-    );
-
-    expect(screen.getByText(/no course available yet/i)).toBeInTheDocument();
+describe('CourseList component', () => {
+  beforeEach(() => {
+    StyleSheetTestUtils.suppressStyleInjection();
   });
 
-  it('should display the list of courses when courses are provided', () => {
+  afterEach(() => {
+    StyleSheetTestUtils.clearBufferAndResumeStyleInjection();
+  });
+
+  test('Renders correctly when course list is empty', () => {
+    const store = mockStore({ courses: [] });
+
+    render(
+      <Provider store={store}>
+        <CourseList />
+      </Provider>
+    );
+
+    expect(screen.getByText(/No course available yet/i)).toBeInTheDocument();
+  });
+
+  test('Renders correctly with courses from Redux store', () => {
     const store = mockStore({
       courses: [
-        { id: 1, name: 'Course 1', credit: 60 },
-        { id: 2, name: 'Course 2', credit: 30 }
-      ]
+        { id: 1, name: 'ES6', credit: 60 },
+        { id: 2, name: 'Webpack', credit: 20 },
+        { id: 3, name: 'React', credit: 40 },
+      ],
     });
 
     render(
@@ -36,12 +42,18 @@ describe('CourseList component with Redux', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/available courses/i)).toBeInTheDocument();
-    expect(screen.getByText(/course name/i)).toBeInTheDocument();
-    expect(screen.getByText(/credit/i)).toBeInTheDocument();
-    expect(screen.getByText('Course 1')).toBeInTheDocument();
+    expect(screen.getByText(/Available courses/i)).toBeInTheDocument();
+    expect(screen.getByText(/Course name/i)).toBeInTheDocument();
+    expect(screen.getByText(/Credit/i)).toBeInTheDocument();
+
+    // Vérifie chaque ligne de cours
+    expect(screen.getByText('ES6')).toBeInTheDocument();
     expect(screen.getByText('60')).toBeInTheDocument();
-    expect(screen.getByText('Course 2')).toBeInTheDocument();
-    expect(screen.getByText('30')).toBeInTheDocument();
+
+    expect(screen.getByText('Webpack')).toBeInTheDocument();
+    expect(screen.getByText('20')).toBeInTheDocument();
+
+    expect(screen.getByText('React')).toBeInTheDocument();
+    expect(screen.getByText('40')).toBeInTheDocument();
   });
 });

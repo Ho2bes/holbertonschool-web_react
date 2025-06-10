@@ -3,11 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { StyleSheet, css } from 'aphrodite';
 import closeIcon from '../../assets/close-icon.png';
 import NotificationItem from '../NotificationItem/NotificationItem';
-import {
-  showDrawer,
-  hideDrawer,
-  markAsRead,
-} from '../../redux/notifications/notificationSlice';
+import { markAsRead, showDrawer, hideDrawer } from '../../redux/notificationSlice';
 
 const styles = StyleSheet.create({
   notificationTitle: {
@@ -47,15 +43,12 @@ const styles = StyleSheet.create({
 
 const Notifications = memo(function Notifications() {
   const dispatch = useDispatch();
+  const notifications = useSelector((state) => state.notifications.list);
   const displayDrawer = useSelector((state) => state.notifications.displayDrawer);
-  const notifications = useSelector((state) => state.notifications.notifications);
 
   return (
     <>
-      <div
-        className={css(styles.notificationTitle)}
-        onClick={() => dispatch(showDrawer())}
-      >
+      <div className={css(styles.notificationTitle)} onClick={() => dispatch(showDrawer())}>
         Your notifications
       </div>
       {displayDrawer && (
@@ -71,16 +64,16 @@ const Notifications = memo(function Notifications() {
                 <img src={closeIcon} alt="close icon" />
               </button>
               <ul>
-                {notifications.map((notif) => (
+                {notifications.map((notification) => (
                   <NotificationItem
-                    key={notif.id}
-                    id={notif.id}
-                    type={notif.type}
-                    value={notif.value}
-                    html={notif.html}
-                    markAsRead={() => dispatch(markAsRead(notif.id))}
+                    key={notification.id}
+                    id={notification.id}
+                    type={notification.type}
+                    value={notification.value}
+                    html={notification.html}
+                    markAsRead={() => dispatch(markAsRead(notification.id))}
                     className={
-                      notif.type === 'urgent'
+                      notification.type === 'urgent'
                         ? css(styles.notificationTypeUrgent)
                         : css(styles.notificationTypeDefault)
                     }
